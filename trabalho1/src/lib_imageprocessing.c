@@ -1,16 +1,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 
 #include "imageprocessing.h"
 
 #include <FreeImage.h>
 
-/*
-imagem abrir_imagem(char *nome_do_arquivo);
-void salvar_imagem(char *nome_do_arquivo);
-void liberar_imagem(imagem *i);
- */
 
 imagem abrir_imagem(char *nome_do_arquivo) {
   FIBITMAP *bitmapIn;
@@ -35,6 +31,10 @@ imagem abrir_imagem(char *nome_do_arquivo) {
   I.g = malloc(sizeof(float) * x * y);
   I.b = malloc(sizeof(float) * x * y);
 
+
+  float maximo;
+  float base = 0.0;
+
    for (int i=0; i<x; i++) {
      for (int j=0; j <y; j++) {
       int idx;
@@ -46,10 +46,90 @@ imagem abrir_imagem(char *nome_do_arquivo) {
       I.g[idx] = color.rgbGreen;
       I.b[idx] = color.rgbBlue;
     }
-   }
+   } 
+
   return I;
 
 }
+
+void BRILHOMUL (imagem *I, float *multiplicador) {
+  float mult = (*multiplicador);
+  printf("banana %f\n", mult);
+
+for (int i=0; i<(I->width); i++) {
+    for (int j=0; j <(I->height); j++) {
+       int idx;
+
+       idx = i + (j*I->width);
+
+       I->r[idx] = I->r[idx]*mult;
+       I->g[idx] = I->g[idx]*mult;
+       I->b[idx] = I->b[idx]*mult;
+
+       if (I->r[idx]>255){
+	 I->r[idx] = 255;
+       }
+	if (I->g[idx]>255){
+	 I->g[idx] = 255;
+       }
+	if (I->b[idx]>255){
+	 I->b[idx] = 255;
+       }
+    }
+  } 
+}
+
+
+void BRILHODIV (imagem *I, float *divisor) {
+float div = (*divisor);
+printf("terra %f \n", div);
+  for (int i=0; i<(I->width); i++) {
+    for (int j=0; j <(I->height); j++) {
+       int idx;
+
+       idx = i + (j*I->width);
+
+       I->r[idx] = I->r[idx]/div;
+       I->g[idx] = I->g[idx]/div;
+       I->b[idx] = I->b[idx]/div;
+
+       if (I->r[idx]>255){
+	 I->r[idx] = 255;
+       }
+	if (I->g[idx]>255){
+	 I->g[idx] = 255;
+       }
+	if (I->b[idx]>255){
+	 I->b[idx] = 255;
+       }
+    }
+  } 
+}
+
+
+void max (imagem *I){
+
+  float res1;
+  float res2;
+  float max = 0.0;
+
+  for (int i=0; i<(I->width); i++) {
+    for (int j=0; j <(I->height); j++) {
+      int idx;
+
+      idx = i + (j*I->width);
+      
+      res1 = (I->r[idx]) + (I->g[idx]) + (I->b[idx]);
+      res2 = (res1);
+
+      if (max < res2){
+        max = res2;
+      }
+    }
+  } 
+  printf ("%f\n", max);
+}
+
 
 void liberar_imagem(imagem *I) {
   free(I->r);
@@ -79,4 +159,5 @@ void salvar_imagem(char *nome_do_arquivo, imagem *I) {
 
   FreeImage_Save(FIF_JPEG, bitmapOut, nome_do_arquivo, JPEG_DEFAULT);
 }
+
 
